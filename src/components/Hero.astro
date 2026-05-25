@@ -84,7 +84,10 @@
       setTimeout(() => {
         bootOverlay.style.transition = "opacity 0.5s ease";
         bootOverlay.style.opacity = "0";
-        setTimeout(() => { bootOverlay.style.display = "none"; }, 500);
+        setTimeout(() => {
+          bootOverlay.style.display = "none";
+          window.dispatchEvent(new CustomEvent("boot-complete"));
+        }, 500);
       }, 400);
     }
   }

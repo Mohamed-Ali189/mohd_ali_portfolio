@@ -110,12 +110,24 @@ const { title = "Mohamed Ali Mohamud | Cyber-Portfolio", description = "Mohamed 
         });
       }
 
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", setupAnimations);
-      } else {
-        setupAnimations();
+      let bootDone = false;
+
+      function scheduleAnimations() {
+        if (bootDone) return;
+        bootDone = true;
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", setupAnimations);
+        } else {
+          setupAnimations();
+        }
       }
-      document.addEventListener("astro:page-load", setupAnimations);
+
+      window.addEventListener("boot-complete", scheduleAnimations, { once: true });
+      setTimeout(scheduleAnimations, 4000);
+
+      document.addEventListener("astro:page-load", () => {
+        if (bootDone) setupAnimations();
+      });
     </script>
   </body>
 </html>
