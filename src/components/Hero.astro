@@ -19,7 +19,7 @@
           <span class="relative z-10">View Ventures</span>
           <span class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
         </a>
-        <a href="#contact" class="btn-ghost relative overflow-hidden group">
+        <a href="#terminal" class="btn-ghost relative overflow-hidden group">
           <span class="relative z-10">Open Terminal</span>
           <span class="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
         </a>
@@ -51,8 +51,49 @@
   </div>
 </section>
 
+<div id="boot-overlay" class="fixed inset-0 z-[60] flex items-center justify-center" style="background: oklch(0.015 0.005 260);">
+  <div class="font-mono text-sm leading-relaxed max-w-[500px] px-4" id="boot-text">
+  </div>
+</div>
+
 <script>
-  // Typewriter for tagline
+  // Boot-up sequence
+  const bootLines = [
+    "> INITIALIZING SECURE CONNECTION...",
+    "> LOADING IDENTITY PROTOCOLS...",
+    "> AUTHENTICATING USER CREDENTIALS...",
+    "> VERIFYING INTEGRITY CHECKSUMS...",
+    "> SYSTEM READY.",
+  ];
+
+  const bootEl = document.getElementById("boot-text")!;
+  const bootOverlay = document.getElementById("boot-overlay")!;
+  let bootIdx = 0;
+
+  function bootTick() {
+    if (bootIdx < bootLines.length) {
+      const p = document.createElement("p");
+      p.className = "text-primary";
+      p.style.opacity = "0";
+      p.textContent = bootLines[bootIdx];
+      bootEl.appendChild(p);
+      requestAnimationFrame(() => { p.style.opacity = "1"; p.style.transition = "opacity 0.15s ease"; });
+      bootIdx++;
+      setTimeout(bootTick, 200 + Math.random() * 150);
+    } else {
+      setTimeout(() => {
+        bootOverlay.style.transition = "opacity 0.5s ease";
+        bootOverlay.style.opacity = "0";
+        setTimeout(() => { bootOverlay.style.display = "none"; }, 500);
+      }, 400);
+    }
+  }
+
+  const startMain = () => {
+    setTimeout(bootTick, 100);
+  };
+
+  // Typewriter for tagline (runs after boot)
   const tagline = "Cybersecurity Specialist | Cloud Engineer | Fintech Founder";
   const taglineEl = document.getElementById("hero-tagline");
   const taglineCursor = document.getElementById("tagline-cursor");
@@ -65,7 +106,6 @@
       setTimeout(typeTagline, 25 + Math.random() * 25);
     } else {
       taglineCursor!.classList.add("animate-pulse");
-      // Start subtitle typewriter
       const subText = "Systems Architect and Emerging Market Innovator.";
       const subEl = document.getElementById("hero-sub-text");
       const subCursor = document.getElementById("sub-cursor");
@@ -79,14 +119,22 @@
           subCursor!.classList.add("animate-pulse");
         }
       }
-      setTimeout(typeSub, 400);
+      setTimeout(() => {
+        const subResolve = () => { if (document.getElementById("hero-sub-text")) typeSub(); else requestAnimationFrame(subResolve); };
+        subResolve();
+      }, 400);
     }
   }
 
+  function startTypewriter() {
+    setTimeout(typeTagline, 1200);
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => setTimeout(typeTagline, 500));
+    document.addEventListener("DOMContentLoaded", () => { startMain(); startTypewriter(); });
   } else {
-    setTimeout(typeTagline, 500);
+    startMain();
+    startTypewriter();
   }
 </script>
 

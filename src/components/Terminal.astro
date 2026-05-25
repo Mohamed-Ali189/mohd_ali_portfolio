@@ -1,0 +1,256 @@
+<div class="terminal-window rounded-xl overflow-hidden border border-border" style="box-shadow: 0 8px 32px oklch(0 0 0 / 0.5), 0 0 40px oklch(0.72 0.16 220 / 0.04);">
+  <div class="terminal-titlebar flex items-center gap-2 px-4 py-2.5" style="background: oklch(0.035 0.01 260); border-bottom: 1px solid oklch(0.72 0.16 220 / 0.1);">
+    <div class="flex gap-1.5">
+      <span class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.6 0.18 25 / 0.8)"></span>
+      <span class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.65 0.15 85 / 0.8)"></span>
+      <span class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.55 0.18 145 / 0.8)"></span>
+    </div>
+    <span class="text-[0.6rem] tracking-[0.05em] text-muted/60 font-mono mx-auto">mohamed@portfolio:~/secure_terminal</span>
+    <span class="w-10"></span>
+  </div>
+
+  <div class="terminal-body p-4 md:p-5 font-mono text-sm leading-relaxed min-h-[280px] md:min-h-[320px] max-h-[420px] overflow-y-auto" id="terminal-body" style="background: oklch(0.015 0.005 260 / 0.95);">
+    <div id="terminal-output">
+      <p class="terminal-line" style="color: oklch(0.72 0.16 220 / 0.7);">┌──( Secure Terminal v2.0 )──[ Connection Established ]</p>
+      <p class="terminal-line" style="color: oklch(0.72 0.16 220 / 0.7);">│</p>
+      <p class="terminal-line text-muted">│  Welcome, Operator. Type <span class="text-primary font-semibold">help</span> for available commands.</p>
+      <p class="terminal-line" style="color: oklch(0.72 0.16 220 / 0.7);">│</p>
+      <p class="terminal-line" style="color: oklch(0.72 0.16 220 / 0.7);">└──➤ Ready.</p>
+    </div>
+    <div id="terminal-responses"></div>
+
+    <div class="terminal-prompt flex items-center gap-1.5 mt-2">
+      <span class="shrink-0 text-primary font-bold text-xs">mohamed@portfolio</span>
+      <span style="color: oklch(0.72 0.16 220 / 0.5);">:</span>
+      <span style="color: oklch(0.55 0.18 265 / 0.8);">~</span>
+      <span style="color: oklch(0.72 0.16 220 / 0.7);">$</span>
+      <input type="text" id="terminal-input" class="terminal-input flex-1 bg-transparent border-none outline-none text-text/90 text-sm font-mono p-0" spellcheck="false" autocomplete="off" autocapitalize="off" />
+    </div>
+  </div>
+</div>
+
+<script>
+  const output = document.getElementById("terminal-output")!;
+  const responses = document.getElementById("terminal-responses")!;
+  const input = document.getElementById("terminal-input") as HTMLInputElement;
+
+  const commands: Record<string, string> = {
+    help: [
+      "Available commands:",
+      "  about     — Who is Mohamed Ali?",
+      "  projects  — View key technology projects",
+      "  skills    — Core technical competencies",
+      "  contact   — Secure communication channels",
+      "  clear     — Clear terminal screen",
+      "  whoami    — Display identity",
+    ].join("\n"),
+    about: [
+      "Mohamed Ali Mohamud — Cybersecurity Specialist, Cloud Engineer,",
+      "Fintech Founder. Building secure digital infrastructure for",
+      "emerging markets since 2023.",
+    ].join("\n"),
+    projects: [
+      "Key Technology Projects:",
+      "  • Smart Shoes & Blind Stick     — Assistive Tech (2023)",
+      "  • SomPay QR Infrastructure      — Fintech Solution (2025)",
+      "  • KonectX Digital Ecosystem     — System Design",
+      "  • Volunteer Management System   — Database System (SRCS)",
+      "  • Fintech Infrastructure Model  — Concept Design",
+    ].join("\n"),
+    skills: [
+      "Core Competencies:",
+      "  • Cybersecurity   — Threat Detection, Endpoint Protection, AAA",
+      "  • Cloud (AWS)     — EC2, S3, IAM, Server Hardening",
+      "  • Linux Admin     — Hardening, SSH, Process Monitoring, Cron",
+      "  • Networking      — CCNA: Routing, Switching, TCP/IP, VLAN",
+      "  • Microsoft       — MCSE: AD DS, Group Policy, DNS, DHCP",
+      "  • Development     — Android MVP, Fintech Architecture, Figma",
+    ].join("\n"),
+    contact: [
+      "Secure Communication Channels:",
+      "",
+      "  [COMMS_CHANNEL]",
+      "    Email:    Raage2464@gmail.com",
+      "",
+      "  [VOICE_FEED]",
+      "    India:    +91 74163 89813",
+      "    Somalia:  +252 61531 2464",
+      "",
+      "  [SYSTEM_FEED // LINKEDIN]",
+      "    https://linkedin.com/in/mohamed-ali-mohamud-rage-542a37314",
+    ].join("\n"),
+    whoami: [
+      " ┌─ Identity Card ─────────────────────────────┐",
+      " │  Name:    Mohamed Ali Mohamud                │",
+      " │  Alias:   Rage                               │",
+      " │  Role:    Cybersecurity Specialist           │",
+      " │           Cloud Engineer                     │",
+      " │           Fintech Founder                    │",
+      " │  Station: Hyderabad, India / Mogadishu       │",
+      " └──────────────────────────────────────────────┘",
+    ].join("\n"),
+  };
+
+  const unknown = [
+    "Command not recognized. Type 'help' for available commands.",
+  ].join("\n");
+
+  let history: string[] = [];
+  let historyIdx = -1;
+
+  function addLine(parent: HTMLElement, text: string, className = "terminal-line text-muted") {
+    const p = document.createElement("p");
+    p.className = className;
+    p.innerHTML = text;
+    parent.appendChild(p);
+    return p;
+  }
+
+  function typeText(element: HTMLElement, text: string, speed: number, cb?: () => void) {
+    let i = 0;
+    const chars = text.split("");
+    function tick() {
+      if (i < chars.length) {
+        element.textContent! += chars[i];
+        i++;
+        const delay = chars[i - 1] === "\n" ? speed * 4 : speed + Math.random() * speed;
+        setTimeout(tick, delay);
+      } else if (cb) {
+        cb();
+      }
+    }
+    tick();
+    scrollBottom();
+  }
+
+  function scrollBottom() {
+    const body = document.getElementById("terminal-body")!;
+    requestAnimationFrame(() => { body.scrollTop = body.scrollHeight; });
+  }
+
+  function processCommand(cmd: string) {
+    const trimmed = cmd.trim();
+    if (!trimmed) return;
+
+    history.push(trimmed);
+    historyIdx = history.length;
+
+    addLine(output, `mohamed@portfolio:~$ ${trimmed}`, "terminal-line text-primary font-semibold");
+    scrollBottom();
+
+    const lower = trimmed.toLowerCase();
+
+    if (lower === "clear") {
+      output.innerHTML = "";
+      responses.innerHTML = "";
+      return;
+    }
+
+    const reply = commands[lower];
+    const text = reply || unknown;
+
+    const lines = text.split("\n");
+    const wrapper = document.createElement("div");
+    wrapper.className = "mb-1";
+    responses.appendChild(wrapper);
+
+    let lineIdx = 0;
+    function typeNextLine() {
+      if (lineIdx < lines.length) {
+        const p = document.createElement("p");
+        p.className = "terminal-line text-muted whitespace-pre-wrap";
+        wrapper.appendChild(p);
+
+        const trimLead = lines[lineIdx].match(/^(\s*)/)?.[1] || "";
+        const content = lines[lineIdx].trimStart();
+
+        if (lower === "contact" && content.includes("SYSTEM_FEED")) {
+          p.innerHTML = `  <a href="https://linkedin.com/in/mohamed-ali-mohamud-rage-542a37314" target="_blank" class="text-primary hover:underline" title="Opens LinkedIn profile in new tab">[SYSTEM_FEED // LINKEDIN]</a>`;
+          lineIdx++;
+          scrollBottom();
+          setTimeout(typeNextLine, 15);
+          return;
+        }
+
+        p.textContent = trimLead;
+        typeText(p, content, 8, () => {
+          lineIdx++;
+          scrollBottom();
+          setTimeout(typeNextLine, 6);
+        });
+      }
+    }
+    typeNextLine();
+  }
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      processCommand(input.value);
+      input.value = "";
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (historyIdx > 0) {
+        historyIdx--;
+        input.value = history[historyIdx];
+      }
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (historyIdx < history.length - 1) {
+        historyIdx++;
+        input.value = history[historyIdx];
+      } else {
+        historyIdx = history.length;
+        input.value = "";
+      }
+    }
+  });
+
+  document.addEventListener("click", () => input?.focus());
+</script>
+
+<style>
+  .terminal-window {
+    font-family: "Space Grotesk", "Cascadia Code", "Fira Code", monospace;
+  }
+
+  .terminal-body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .terminal-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .terminal-body::-webkit-scrollbar-thumb {
+    background: oklch(0.72 0.16 220 / 0.15);
+    border-radius: 2px;
+  }
+
+  .terminal-line {
+    margin: 0;
+    line-height: 1.65;
+    word-break: break-word;
+  }
+
+  .terminal-input::placeholder {
+    color: oklch(0.55 0.04 260 / 0.4);
+  }
+
+  @media (max-width: 640px) {
+    .terminal-body {
+      min-height: 240px;
+      max-height: 340px;
+      padding: 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .terminal-titlebar span:last-child {
+      display: none;
+    }
+
+    .terminal-prompt {
+      font-size: 0.75rem;
+    }
+  }
+</style>

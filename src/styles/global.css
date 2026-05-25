@@ -196,6 +196,19 @@
   /* Section title with accent line */
   .section-title {
     position: relative;
+    transition: text-shadow 0.2s ease;
+  }
+
+  .section-title:hover {
+    animation: glitch 0.25s ease-in-out infinite alternate;
+  }
+
+  @keyframes glitch {
+    0% { text-shadow: -1px 0 oklch(0.72 0.16 220 / 0.3), 1px 1px oklch(0.55 0.18 265 / 0.2); }
+    25% { text-shadow: 1px -0.5px oklch(0.72 0.16 220 / 0.25), -1px 0.5px oklch(0.55 0.18 265 / 0.25); }
+    50% { text-shadow: -0.5px 1px oklch(0.72 0.16 220 / 0.35), 0.5px -1px oklch(0.55 0.18 265 / 0.15); }
+    75% { text-shadow: 2px 0 oklch(0.72 0.16 220 / 0.2), -2px 0 oklch(0.55 0.18 265 / 0.2); }
+    100% { text-shadow: -1px 0.5px oklch(0.72 0.16 220 / 0.3), 1px -0.5px oklch(0.55 0.18 265 / 0.2); }
   }
 
   .section-title::after {
@@ -208,7 +221,7 @@
     box-shadow: 0 0 10px var(--color-primary-glow);
   }
 
-  /* Decorative corner brackets on section cards */
+  /* Mobile-friendly corner brackets */
   .section-card {
     position: relative;
   }
@@ -216,23 +229,30 @@
   .section-card::before {
     content: '┌';
     position: absolute;
-    top: 8px;
-    left: 10px;
-    font-size: 0.6rem;
+    top: 6px;
+    left: 8px;
+    font-size: clamp(0.45rem, 1.5vw, 0.6rem);
     color: oklch(0.72 0.16 220 / 0.2);
     font-family: monospace;
     pointer-events: none;
+    line-height: 1;
   }
 
   .section-card::after {
     content: '┘';
     position: absolute;
-    bottom: 8px;
-    right: 10px;
-    font-size: 0.6rem;
+    bottom: 6px;
+    right: 8px;
+    font-size: clamp(0.45rem, 1.5vw, 0.6rem);
     color: oklch(0.72 0.16 220 / 0.2);
     font-family: monospace;
     pointer-events: none;
+    line-height: 1;
+  }
+
+  @media (max-width: 640px) {
+    .section-card::before { top: 4px; left: 5px; }
+    .section-card::after { bottom: 4px; right: 5px; }
   }
 
   /* Timeline */

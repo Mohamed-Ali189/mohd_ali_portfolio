@@ -85,12 +85,23 @@ const projects = [
   </div>
 </section>
 
-<!-- Modal -->
+<!-- Terminal-style Modal -->
 <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" style="background: oklch(0 0 0 / 0.6); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease;">
-  <div class="modal-content relative w-[90%] max-w-[600px] rounded-2xl p-8 md:p-10" style="background: linear-gradient(145deg, oklch(0.06 0.015 260 / 0.95), oklch(0.025 0.008 260 / 0.98)); border: 1px solid oklch(0.72 0.16 220 / 0.2); transform: translateY(30px) scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 50px oklch(0 0 0 / 0.5), 0 0 30px oklch(0.72 0.16 220 / 0.1);">
-    <button class="modal-close absolute top-5 right-5 bg-transparent border-none text-muted text-2xl cursor-pointer transition-colors hover:text-danger" aria-label="Close modal">&times;</button>
-    <div class="modal-body" id="modal-body">
+  <div class="modal-terminal relative w-[92%] max-w-[600px] rounded-xl overflow-hidden border" style="border-color: oklch(0.72 0.16 220 / 0.2); transform: translateY(30px) scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 50px oklch(0 0 0 / 0.5), 0 0 40px oklch(0.72 0.16 220 / 0.08);">
+    <div class="flex items-center gap-2 px-4 py-2.5" style="background: oklch(0.035 0.01 260); border-bottom: 1px solid oklch(0.72 0.16 220 / 0.1);">
+      <div class="flex gap-1.5">
+        <span class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.6 0.18 25 / 0.8)"></span>
+        <span class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.65 0.15 85 / 0.8)"></span>
+        <span class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.55 0.18 145 / 0.8)"></span>
+      </div>
+      <span class="text-[0.55rem] tracking-[0.05em] text-muted/50 font-mono mx-auto">PROJECT_DETAILS.exe</span>
+      <button class="modal-close bg-transparent border-none text-muted/50 text-lg cursor-pointer transition-colors hover:text-danger leading-none p-1" aria-label="Close modal">✕</button>
+    </div>
+    <div class="p-5 md:p-7 font-mono" style="background: oklch(0.015 0.005 260 / 0.98);" id="modal-body">
       <!-- Filled dynamically -->
+    </div>
+    <div class="px-5 md:px-7 pb-4" style="background: oklch(0.015 0.005 260 / 0.98);">
+      <p style="color: oklch(0.72 0.16 220 / 0.4); font-size: 0.6rem; font-family: monospace;">└──➤ Press <span class="text-primary" style="font-weight: 600;">ESC</span> or click <span class="text-primary" style="font-weight: 600;">✕</span> to close</p>
     </div>
   </div>
 </div>
@@ -102,16 +113,16 @@ const projects = [
   const projectCards = document.querySelectorAll(".project-card");
 
   function openModal(title: string, tag: string, details: string[]) {
-    let html = `<h3 class="font-display text-xl text-primary mb-3">${title}</h3>`;
-    html += `<span class="text-[0.8rem] text-secondary uppercase tracking-[0.1em] font-semibold inline-block mb-5">${tag}</span>`;
+    let html = `<p style="color: oklch(0.72 0.16 220 / 0.5); font-size: 0.7rem; letter-spacing: 0.05em; margin-bottom: 0.75rem;">┌──( PROJECT_DETAILS )──[ ${tag} ]</p>`;
+    html += `<h3 class="font-display text-xl text-primary mb-4" style="font-family: 'Orbitron', monospace;">${title}</h3>`;
     if (details?.length) {
-      html += '<ul class="space-y-2">';
-      details.forEach(d => { html += `<li class="flex items-start gap-2 text-sm text-muted">▹ <span>${d}</span></li>`; });
-      html += '</ul>';
+      html += '<div class="space-y-2" style="border-left: 1px solid oklch(0.72 0.16 220 / 0.15); padding-left: 0.75rem;">';
+      details.forEach(d => { html += `<p style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.8rem; color: oklch(0.55 0.04 260); line-height: 1.6;"><span style="color: oklch(0.72 0.16 220 / 0.5);">▹</span> <span>${d}</span></p>`; });
+      html += '</div>';
     }
     modalBody!.innerHTML = html;
     modal!.classList.add("active");
-    (modal!.querySelector(".modal-content") as HTMLElement).style.transform = "translateY(0) scale(1)";
+    (modal!.querySelector(".modal-terminal") as HTMLElement).style.transform = "translateY(0) scale(1)";
     modal!.style.opacity = "1";
     modal!.style.pointerEvents = "all";
     document.body.style.overflow = "hidden";
@@ -119,7 +130,7 @@ const projects = [
 
   function closeModalFn() {
     modal!.classList.remove("active");
-    (modal!.querySelector(".modal-content") as HTMLElement).style.transform = "translateY(30px) scale(0.95)";
+    (modal!.querySelector(".modal-terminal") as HTMLElement).style.transform = "translateY(30px) scale(0.95)";
     modal!.style.opacity = "0";
     modal!.style.pointerEvents = "none";
     document.body.style.overflow = "";
