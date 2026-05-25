@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: oklch(0.022 0.008 260);
+  --color-bg-soft: oklch(0.04 0.012 260);
+  --color-surface: oklch(0.07 0.015 260 / 0.6);
+  --color-surface-hover: oklch(0.1 0.02 260 / 0.7);
+  --color-primary: oklch(0.72 0.16 220);
+  --color-primary-glow: oklch(0.72 0.16 220 / 0.3);
+  --color-secondary: oklch(0.55 0.18 265);
+  --color-text: oklch(0.93 0.012 260);
+  --color-muted: oklch(0.55 0.04 260);
+  --color-border: oklch(0.15 0.02 260);
+  --color-border-active: oklch(0.72 0.16 220 / 0.3);
+  --color-danger: oklch(0.6 0.22 10);
+
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Orbitron", "Space Grotesk", sans-serif;
+
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --radius-card: 1rem;
+  --radius-pill: 9999px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-bg);
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: oklch(0.72 0.16 220 / 0.35);
+    color: oklch(0.98 0 0);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: oklch(0.03 0.005 260);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.2 0.03 260);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.3 0.04 260);
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply mx-auto w-full max-w-6xl px-4 md:px-8 py-12 md:py-20;
+  }
+
+  .section-card {
+    @apply relative overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface backdrop-blur-xl;
+    box-shadow: 0 8px 32px oklch(0 0 0 / 0.4);
+  }
+
+  .section-title {
+    @apply font-display text-sm font-bold tracking-[0.18em] uppercase text-primary mb-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-[var(--radius-pill)] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-bg transition-all duration-500;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    box-shadow: 0 0 20px var(--color-primary-glow);
+  }
+
+  .btn-primary:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 0 30px var(--color-primary-glow), 0 0 60px oklch(0.72 0.16 220 / 0.15);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-border-active px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-primary bg-bg/40 transition-all duration-500;
+  }
+
+  .btn-ghost:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 0 20px var(--color-primary-glow);
+  }
+
+  .tag-pill {
+    @apply inline-flex items-center gap-1.5 rounded-[var(--radius-pill)] border border-border-active px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary;
+    background: oklch(0.72 0.16 220 / 0.06);
+  }
+
+  .status-dot {
+    @apply inline-block w-2 h-2 rounded-full;
+    background: var(--color-primary);
+    box-shadow: 0 0 8px var(--color-primary);
+    animation: statusPulse 2s infinite var(--ease-premium);
+  }
+
+  @keyframes statusPulse {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px var(--color-primary); }
+    50% { opacity: 0.5; transform: scale(1.2); box-shadow: 0 0 15px var(--color-primary), 0 0 25px oklch(0.72 0.16 220 / 0.35); }
+  }
+
+  .text-gradient {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  }
+
+  /* Grid background */
+  .grid-bg {
+    @apply fixed inset-0 pointer-events-none -z-10;
+    background:
+      radial-gradient(circle at 50% 0%, oklch(0.04 0.012 260) 0%, transparent 80%),
+      linear-gradient(oklch(0.72 0.16 220 / 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.72 0.16 220 / 0.025) 1px, transparent 1px);
+    background-size: 100% 100%, 48px 48px, 48px 48px;
+  }
+
+  /* Animation initial states (hidden until motion reveals them) */
+  .reveal,
+  .stagger-card,
+  .timeline-item {
+    will-change: opacity, transform;
+  }
+
+  .reveal { opacity: 0; transform: translateY(30px) scale(0.97); }
+  .stagger-card { opacity: 0; transform: translateY(20px) scale(0.97); }
+  .timeline-item { opacity: 0; transform: translateX(-15px); }
+
+  /* 3D Tilt card effects */
+  .tilt-card {
+    transform-style: preserve-3d;
+    transition: transform 0.2s ease-out, border-color 0.4s ease;
+  }
+
+  .card-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .card-content {
+    transform: translateZ(20px);
+  }
+
+  .card-border-hologram {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+    padding: 1px;
+    background: conic-gradient(
+      from 0deg,
+      transparent,
+      oklch(0.72 0.16 220 / 0.4),
+      oklch(0.55 0.18 265 / 0.4),
+      transparent 60%,
+      transparent
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: hologramRotate 3s linear infinite;
+  }
+
+  .tilt-card:hover .card-border-hologram {
+    opacity: 1;
+  }
+
+  @keyframes hologramRotate {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 200%; }
+  }
+
+  /* Enhanced typography - improved hierarchy */
+  .section-text-lg {
+    @apply text-base md:text-lg leading-[1.7] text-muted;
+  }
+
+  .section-text-sm {
+    @apply text-sm leading-[1.6] text-muted;
+  }
+
+  /* Section title with accent line */
+  .section-title {
+    position: relative;
+  }
+
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--color-primary);
+    margin-top: 0.75rem;
+    box-shadow: 0 0 10px var(--color-primary-glow);
+  }
+
+  /* Decorative corner brackets on section cards */
+  .section-card {
+    position: relative;
+  }
+
+  .section-card::before {
+    content: '┌';
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 0.6rem;
+    color: oklch(0.72 0.16 220 / 0.2);
+    font-family: monospace;
+    pointer-events: none;
+  }
+
+  .section-card::after {
+    content: '┘';
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 0.6rem;
+    color: oklch(0.72 0.16 220 / 0.2);
+    font-family: monospace;
+    pointer-events: none;
+  }
+
+  /* Timeline */
+  .timeline-line {
+    @apply absolute left-[7px] top-3 bottom-0 w-0.5;
+    background: oklch(0.72 0.16 220 / 0.15);
+  }
+
+  /* Button with magnetic pull */
+  .btn-primary, .btn-ghost {
+    position: relative;
+    overflow: hidden;
+  }
+}

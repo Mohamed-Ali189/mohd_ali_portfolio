@@ -1,0 +1,82 @@
+<canvas id="network-canvas" aria-hidden="true" class="pointer-events-none fixed inset-0 z-0" style="opacity: 0.4;"></canvas>
+
+<script>
+  const canvas = document.getElementById("network-canvas") as HTMLCanvasElement;
+  const ctx = canvas!.getContext("2d")!;
+  let w: number, h: number;
+  const particles: { x: number; y: number; z: number; vx: number; vy: number; size: number }[] = [];
+  const PARTICLE_COUNT = 60;
+  const CONNECTION_DIST = 150;
+  let mouseX = -1000, mouseY = -1000;
+  let mouseInfluenceX = 0, mouseInfluenceY = 0;
+
+  function resize() {
+    w = canvas!.width = window.innerWidth;
+    h = canvas!.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      z: Math.random() * 200,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 2 + 0.5,
+    });
+  }
+
+  document.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function draw() {
+    ctx!.clearRect(0, 0, w, h);
+
+    // Smooth mouse influence
+    mouseInfluenceX += ((mouseX - w / 2) * 0.002 - mouseInfluenceX) * 0.05;
+    mouseInfluenceY += ((mouseY - h / 2) * 0.002 - mouseInfluenceY) * 0.05;
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx + mouseInfluenceX * (p.z / 200);
+      p.y += p.vy + mouseInfluenceY * (p.z / 200);
+
+      if (p.x < 0) p.x = w;
+      if (p.x > w) p.x = 0;
+      if (p.y < 0) p.y = h;
+      if (p.y > h) p.y = 0;
+
+      // Draw particle
+      const alpha = 0.3 + (p.z / 200) * 0.4;
+      ctx!.beginPath();
+      ctx!.arc(p.x, p.y, p.size * (1 - p.z / 400), 0, Math.PI * 2);
+      ctx!.fillStyle = `oklch(0.72 0.16 220 / ${alpha})`;
+      ctx!.fill();
+
+      // Draw connections
+      for (let j = i + 1; j < particles.length; j++) {
+        const p2 = particles[j];
+        const dx = p.x - p2.x;
+        const dy = p.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < CONNECTION_DIST) {
+          const lineAlpha = (1 - dist / CONNECTION_DIST) * 0.15 * (1 - (p.z + p2.z) / 400);
+          ctx!.beginPath();
+          ctx!.moveTo(p.x, p.y);
+          ctx!.lineTo(p2.x, p2.y);
+          ctx!.strokeStyle = `oklch(0.72 0.16 220 / ${lineAlpha})`;
+          ctx!.lineWidth = 0.5;
+          ctx!.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+</script>

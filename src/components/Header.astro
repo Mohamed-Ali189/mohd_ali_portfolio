@@ -1,0 +1,102 @@
+---
+const links = [
+  { href: "#about", label: "Identity" },
+  { href: "#experience", label: "Ventures" },
+  { href: "#innovations", label: "Innovations" },
+  { href: "#skills", label: "Expertise" },
+  { href: "#education", label: "Academy" },
+  { href: "#contact", label: "Terminal" },
+];
+---
+
+<header class="fixed top-0 inset-x-0 z-40 h-16 md:h-[70px] flex items-center justify-between px-4 md:px-8" style="backdrop-filter: blur(16px); background: linear-gradient(90deg, oklch(0 0 0 / 0.75), oklch(0.02 0.008 260 / 0.9)); border-bottom: 1px solid oklch(0.72 0.16 220 / 0.15);">
+  <a href="#" class="font-display text-sm tracking-[0.12em] uppercase text-primary font-bold no-underline">
+    M<span class="text-secondary">.</span>A
+  </a>
+
+  <nav class="hidden md:flex gap-5" aria-label="Primary navigation">
+    {links.map((link) => (
+      <a href={link.href} class="text-[0.65rem] tracking-[0.14em] uppercase font-semibold text-muted no-underline transition-colors duration-300 hover:text-primary">
+        {link.label}
+      </a>
+    ))}
+  </nav>
+
+  <button class="nav-toggle md:hidden bg-transparent border-none cursor-pointer p-2 z-50" aria-label="Toggle navigation">
+    <span class="hamburger block relative w-6 h-0.5 bg-primary transition-all duration-300"></span>
+  </button>
+</header>
+
+<div class="nav-overlay fixed inset-0 z-30 flex items-center justify-center bg-bg/98" style="backdrop-filter: blur(10px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+  <nav class="flex flex-col gap-10 text-center">
+    {links.map((link) => (
+      <a href={link.href} class="font-display text-2xl text-text no-underline uppercase tracking-[0.15em] font-semibold transition-colors duration-300 hover:text-primary nav-link">
+        {link.label}
+      </a>
+    ))}
+  </nav>
+</div>
+
+<script>
+  const toggle = document.querySelector(".nav-toggle");
+  const overlay = document.querySelector(".nav-overlay") as HTMLElement;
+  const hamburger = document.querySelector(".hamburger") as HTMLElement;
+  const body = document.body;
+  const navLinks = document.querySelectorAll(".nav-link");
+
+  let isOpen = false;
+
+  function toggleNav() {
+    isOpen = !isOpen;
+    overlay!.style.opacity = isOpen ? "1" : "0";
+    overlay!.style.pointerEvents = isOpen ? "all" : "none";
+    body.style.overflow = isOpen ? "hidden" : "";
+
+    if (isOpen) {
+      hamburger!.style.background = "transparent";
+    } else {
+      hamburger!.style.background = "";
+    }
+  }
+
+  toggle?.addEventListener("click", toggleNav);
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (isOpen) toggleNav();
+    });
+  });
+
+  // Update hamburger pseudo-elements via CSS class
+  document.addEventListener("astro:page-load", () => {
+    if (isOpen) {
+      hamburger!.style.background = "transparent";
+    }
+  });
+</script>
+
+<style>
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: oklch(0.72 0.16 220);
+    position: absolute;
+    transition: all 0.3s ease;
+  }
+  .hamburger::before { top: -8px; }
+  .hamburger::after { top: 8px; }
+
+  .nav-overlay[style*="opacity: 1"] .hamburger::before,
+  body:has(.nav-overlay[style*="opacity: 1"]) + .nav-toggle .hamburger::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+  .nav-overlay[style*="opacity: 1"] .hamburger::after,
+  body:has(.nav-overlay[style*="opacity: 1"]) + .nav-toggle .hamburger::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
+</style>

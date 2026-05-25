@@ -1,0 +1,37 @@
+---
+const { text = "", speed = 60 } = Astro.props;
+---
+
+<span id="typewriter-text" class="inline-flex items-center gap-0.5">
+  <span id="tw-content"></span>
+  <span id="tw-cursor" class="inline-block w-[2px] h-[1em] bg-primary animate-pulse"></span>
+</span>
+
+<script>
+  const content = document.getElementById("tw-content")!;
+  const cursor = document.getElementById("tw-cursor")!;
+  const text = (document.getElementById("typewriter-text")?.dataset?.text ?? "");
+  const speed = parseInt(document.getElementById("typewriter-text")?.dataset?.speed ?? "60")!;
+
+  let index = 0;
+  let isDeleting = false;
+  let isDone = false;
+
+  function type() {
+    if (isDone) return;
+
+    if (!isDeleting) {
+      content!.textContent = text!.slice(0, index + 1);
+      index++;
+      if (index >= text!.length) {
+        isDone = true;
+        cursor!.classList.add("animate-pulse");
+        return;
+      }
+      setTimeout(type, speed);
+    }
+  }
+
+  cursor!.classList.remove("animate-pulse");
+  setTimeout(type, 500);
+</script>

@@ -1,0 +1,94 @@
+---
+import "../styles/global.css";
+import CursorGlow from "../components/CursorGlow.astro";
+import NetworkBg from "../components/NetworkBg.astro";
+import ScanLines from "../components/ScanLines.astro";
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "Mohamed Ali Mohamud | Cyber-Portfolio", description = "Mohamed Ali Mohamud – Cybersecurity Specialist, Cloud Engineer, Fintech Founder, and Systems Architect." } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="author" content="Mohamed Ali Mohamud" />
+    <title>{title}</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <NetworkBg />
+    <CursorGlow />
+    <ScanLines />
+    <div class="grid-bg" aria-hidden="true"></div>
+    <slot />
+    <script>
+      import { inView, animate, stagger } from "motion";
+
+      function setupAnimations() {
+        // Reveal single elements with keyframe animation (guaranteed to play)
+        document.querySelectorAll(".reveal").forEach((el) => {
+          inView(
+            el,
+            () => {
+              animate(
+                el,
+                { opacity: [0, 1], transform: ["translateY(30px) scale(0.97)", "translateY(0) scale(1)"] },
+                { duration: 0.8, easing: [0.22, 1, 0.36, 1] }
+              );
+            },
+            { amount: 0.15 }
+          );
+        });
+
+        // Stagger card grids
+        document.querySelectorAll(".stagger-grid").forEach((grid) => {
+          const cards = Array.from(grid.querySelectorAll(".stagger-card"));
+          inView(
+            grid,
+            () => {
+              animate(
+                cards,
+                { opacity: [0, 1], transform: ["translateY(20px) scale(0.97)", "translateY(0) scale(1)"] },
+                { duration: 0.5, easing: [0.22, 1, 0.36, 1], delay: stagger(0.08) }
+              );
+            },
+            { amount: 0.1 }
+          );
+        });
+
+        // Stagger timeline items
+        document.querySelectorAll(".stagger-timeline").forEach((tl) => {
+          const items = Array.from(tl.querySelectorAll(".timeline-item"));
+          inView(
+            tl,
+            () => {
+              animate(
+                items,
+                { opacity: [0, 1], transform: ["translateX(-15px)", "translateX(0)"] },
+                { duration: 0.5, easing: [0.22, 1, 0.36, 1], delay: stagger(0.12) }
+              );
+            },
+            { amount: 0.1 }
+          );
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupAnimations);
+      } else {
+        setupAnimations();
+      }
+      document.addEventListener("astro:page-load", setupAnimations);
+    </script>
+  </body>
+</html>

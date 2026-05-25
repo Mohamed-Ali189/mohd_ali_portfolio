@@ -1,0 +1,29 @@
+{
+  "name": "mohd_ali_portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mohamed-Ali189/mohd_ali_portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mohamed-Ali189/mohd_ali_portfolio/issues"
+  },
+  "homepage": "https://github.com/Mohamed-Ali189/mohd_ali_portfolio#readme",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.3.7",
+    "motion": "^12.40.0",
+    "tailwindcss": "^4.3.0"
+  }
+}

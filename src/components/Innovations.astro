@@ -1,0 +1,142 @@
+---
+const projects = [
+  {
+    title: "Smart Shoes & Blind Stick",
+    tag: "Assistive Tech · 2023",
+    text: "Smart alerts and navigation assistance designed to improve mobility safety for blind individuals in Somalia.",
+    details: ["Smart alert mechanisms for obstacle detection", "Navigation assistance support integrated into wearable hardware", "Safety-focused system design tailored for visually impaired users", "Impact Goal: Improve daily mobility safety for blind individuals in Somalia"],
+  },
+  {
+    title: "SomPay QR Infrastructure",
+    tag: "Fintech Solution · 2025",
+    text: "Merchant-side QR payment ecosystem for Somali telecom wallets. Long-Term Vision: Nationwide interoperable QR infrastructure.",
+    details: ["Static & dynamic merchant QR model", "Wallet-triggered USSD authorization system", "Secure transaction confirmation workflow", "Merchant onboarding architecture", "Android-native scalable MVP", "Long-Term Vision: Nationwide interoperable QR infrastructure"],
+  },
+  {
+    title: "KonectX Digital Ecosystem",
+    tag: "System Design",
+    text: "Structured operational system for medical travelers and international students, featuring workflow automation.",
+    details: ["Service mapping architecture for medical travelers", "Workflow automation planning algorithms", "Resource coordination framework linking local resources with international students", "Financial assistance pathway modeling", "Expansion-ready scalable digital platform concept"],
+  },
+  {
+    title: "Volunteer Management System",
+    tag: "Database System",
+    text: "Contributed to structured volunteer database system for the Somali Red Crescent Society (SRCS).",
+    details: ["Developed for the Somali Red Crescent Society (SRCS)", "Structured volunteer database architecture", "Digital coordination support and rapid deployment mapping", "System improvement and tracking workflow optimization"],
+  },
+  {
+    title: "Fintech Infrastructure Model",
+    tag: "Concept Design",
+    text: "Secure telecom wallet API integration, low-cost QR infrastructure, and financial inclusion scalability.",
+    details: ["Secure telecom wallet API integration strategy", "Merchant-based digital payment routing architecture", "Low-cost, high-volume QR infrastructure modeling", "Financial inclusion scalability projections", "Digital sovereignty approach tailored specifically for Somalia"],
+  },
+];
+---
+
+<section class="section-container" id="innovations" aria-labelledby="innovations-title">
+  <div class="section-card p-6 md:p-10 reveal">
+    <h2 class="section-title" id="innovations-title">Innovations & Technology Projects</h2>
+
+    <div class="stagger-grid grid grid-cols-[repeat(auto-fill,minmax(min(280px,100%),1fr))] gap-5">
+      {projects.map((p) => (
+        <article class="stagger-card project-card tilt-card relative overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface/50 backdrop-blur-xl p-5 cursor-pointer transition-all duration-500 hover:border-border-active" style="box-shadow: 0 8px 32px oklch(0 0 0 / 0.3); transform-style: preserve-3d; perspective: 800px;"
+          data-title={p.title}
+          data-tag={p.tag}
+          data-details={JSON.stringify(p.details)}>
+          <div class="card-shine"></div>
+          <div class="relative z-[1] card-content">
+            <h3 class="font-display text-base text-primary mb-2">{p.title}</h3>
+            <p class="text-[0.7rem] text-secondary uppercase tracking-[0.1em] font-semibold mb-2">{p.tag}</p>
+            <p class="text-sm text-muted leading-relaxed">{p.text}</p>
+          </div>
+          <div class="absolute inset-0 pointer-events-none rounded-[inherit] opacity-0 transition-opacity duration-500 hover:opacity-100 card-border-glow" style="background: linear-gradient(135deg, transparent 40%, oklch(0.72 0.16 220 / 0.15), transparent 60%);"></div>
+          <div class="absolute inset-0 pointer-events-none rounded-[inherit] card-border-hologram"></div>
+        </article>
+      ))}
+    </div>
+
+<script>
+  // 3D Tilt effect on cards
+  const tiltCards = document.querySelectorAll(".tilt-card");
+  tiltCards.forEach((card) => {
+    card.addEventListener("mousemove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -8;
+      const rotateY = ((x - centerX) / centerX) * 8;
+      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      // Shine follows mouse
+      const shine = card.querySelector(".card-shine") as HTMLElement;
+      if (shine) {
+        shine.style.background = `radial-gradient(circle at ${x}px ${y}px, oklch(0.72 0.16 220 / 0.08), transparent 60%)`;
+        shine.style.opacity = "1";
+      }
+    });
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)";
+      const shine = card.querySelector(".card-shine") as HTMLElement;
+      if (shine) shine.style.opacity = "0";
+    });
+  });
+</script>
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" style="background: oklch(0 0 0 / 0.6); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease;">
+  <div class="modal-content relative w-[90%] max-w-[600px] rounded-2xl p-8 md:p-10" style="background: linear-gradient(145deg, oklch(0.06 0.015 260 / 0.95), oklch(0.025 0.008 260 / 0.98)); border: 1px solid oklch(0.72 0.16 220 / 0.2); transform: translateY(30px) scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 50px oklch(0 0 0 / 0.5), 0 0 30px oklch(0.72 0.16 220 / 0.1);">
+    <button class="modal-close absolute top-5 right-5 bg-transparent border-none text-muted text-2xl cursor-pointer transition-colors hover:text-danger" aria-label="Close modal">&times;</button>
+    <div class="modal-body" id="modal-body">
+      <!-- Filled dynamically -->
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.querySelector(".modal-overlay") as HTMLElement;
+  const modalBody = document.getElementById("modal-body")!;
+  const closeBtn = document.querySelector(".modal-close") as HTMLElement;
+  const projectCards = document.querySelectorAll(".project-card");
+
+  function openModal(title: string, tag: string, details: string[]) {
+    let html = `<h3 class="font-display text-xl text-primary mb-3">${title}</h3>`;
+    html += `<span class="text-[0.8rem] text-secondary uppercase tracking-[0.1em] font-semibold inline-block mb-5">${tag}</span>`;
+    if (details?.length) {
+      html += '<ul class="space-y-2">';
+      details.forEach(d => { html += `<li class="flex items-start gap-2 text-sm text-muted">▹ <span>${d}</span></li>`; });
+      html += '</ul>';
+    }
+    modalBody!.innerHTML = html;
+    modal!.classList.add("active");
+    (modal!.querySelector(".modal-content") as HTMLElement).style.transform = "translateY(0) scale(1)";
+    modal!.style.opacity = "1";
+    modal!.style.pointerEvents = "all";
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModalFn() {
+    modal!.classList.remove("active");
+    (modal!.querySelector(".modal-content") as HTMLElement).style.transform = "translateY(30px) scale(0.95)";
+    modal!.style.opacity = "0";
+    modal!.style.pointerEvents = "none";
+    document.body.style.overflow = "";
+  }
+
+  projectCards.forEach(card => {
+    card.addEventListener("click", () => {
+      const title = card.getAttribute("data-title") || "";
+      const tag = card.getAttribute("data-tag") || "";
+      try {
+        const details = JSON.parse(card.getAttribute("data-details") || "[]");
+        openModal(title, tag, details);
+      } catch (e) { console.error(e); }
+    });
+  });
+
+  closeBtn?.addEventListener("click", closeModalFn);
+  modal?.addEventListener("click", (e) => { if (e.target === modal) closeModalFn(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal?.classList.contains("active")) closeModalFn(); });
+</script>
