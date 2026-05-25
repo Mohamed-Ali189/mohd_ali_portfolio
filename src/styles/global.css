@@ -132,8 +132,8 @@
   }
 
   .reveal { opacity: 0; transform: translateY(30px) scale(0.97); }
-  .stagger-card { opacity: 0; transform: translateY(20px) scale(0.97); }
-  .timeline-item { opacity: 0; transform: translateX(-15px); }
+  .stagger-card { opacity: 0; }
+  .timeline-item { opacity: 0; }
 
   /* 3D Tilt card effects */
   .tilt-card {

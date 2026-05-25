@@ -32,10 +32,23 @@ const { title = "Mohamed Ali Mohamud | Cyber-Portfolio", description = "Mohamed 
     <div class="grid-bg" aria-hidden="true"></div>
     <slot />
     <script>
-      import { inView, animate, stagger } from "motion";
+      import { inView, animate } from "motion";
+
+      const animVariants = [
+        { opacity: [0, 1], transform: ["translateY(30px) scale(0.97)", "translateY(0) scale(1)"] },
+        { opacity: [0, 1], transform: ["translateY(-20px)", "translateY(0)"] },
+        { opacity: [0, 1], transform: ["translateX(-30px)", "translateX(0)"] },
+        { opacity: [0, 1], transform: ["translateX(30px)", "translateX(0)"] },
+        { opacity: [0, 1], transform: ["scale(0.85) translateY(10px)", "scale(1) translateY(0)"] },
+        { opacity: [0, 1], transform: ["translateY(20px) rotateX(6deg)", "translateY(0) rotateX(0)"] },
+      ];
+
+      function pickRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
 
       function setupAnimations() {
-        // Reveal single elements with keyframe animation (guaranteed to play)
+        // Reveal single elements with keyframe animation
         document.querySelectorAll(".reveal").forEach((el) => {
           inView(
             el,
@@ -50,33 +63,47 @@ const { title = "Mohamed Ali Mohamud | Cyber-Portfolio", description = "Mohamed 
           );
         });
 
-        // Stagger card grids
+        // Stagger card grids — each card gets a random variant + random delay
         document.querySelectorAll(".stagger-grid").forEach((grid) => {
           const cards = Array.from(grid.querySelectorAll(".stagger-card"));
           inView(
             grid,
             () => {
-              animate(
-                cards,
-                { opacity: [0, 1], transform: ["translateY(20px) scale(0.97)", "translateY(0) scale(1)"] },
-                { duration: 0.5, easing: [0.22, 1, 0.36, 1], delay: stagger(0.08) }
-              );
+              cards.forEach((card, i) => {
+                const variant = pickRandom(animVariants);
+                animate(
+                  card,
+                  variant,
+                  {
+                    duration: 0.5 + Math.random() * 0.3,
+                    easing: [0.22, 1, 0.36, 1],
+                    delay: i * 0.04 + Math.random() * 0.15,
+                  }
+                );
+              });
             },
             { amount: 0.1 }
           );
         });
 
-        // Stagger timeline items
+        // Timeline items — random variant per item
         document.querySelectorAll(".stagger-timeline").forEach((tl) => {
           const items = Array.from(tl.querySelectorAll(".timeline-item"));
           inView(
             tl,
             () => {
-              animate(
-                items,
-                { opacity: [0, 1], transform: ["translateX(-15px)", "translateX(0)"] },
-                { duration: 0.5, easing: [0.22, 1, 0.36, 1], delay: stagger(0.12) }
-              );
+              items.forEach((item, i) => {
+                const variant = pickRandom(animVariants);
+                animate(
+                  item,
+                  variant,
+                  {
+                    duration: 0.5 + Math.random() * 0.3,
+                    easing: [0.22, 1, 0.36, 1],
+                    delay: i * 0.08 + Math.random() * 0.12,
+                  }
+                );
+              });
             },
             { amount: 0.1 }
           );
